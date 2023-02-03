@@ -1,0 +1,245 @@
+
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{manfnt}
+\usepackage{amsfonts,amsmath, amsthm}
+\usepackage[margin=2cm]{geometry}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+
+\begin{document}
+
+  \title{Informe\\
+  Matem\'atica Discreta II\\
+     Buy a Ticket\\
+     Problema:938D}
+  \author{Abel Molina S\'anchez\\
+  Grupo 2-11\\
+  Ciencias de la Computaci\'on\\
+  Universidad de La Habana}
+    \maketitle  
+
+\newpage 
+
+\section{Problema:}
+\begin{center}
+ D. Buy a Ticket\\
+\end{center}
+
+
+Musicians of a popular band 'Flayer' have announced that they are going to 'make their exit' with a world tour. Of course, 
+they will visit Berland as well.\\
+There are $n$ cities in Berland. People can travel between cities using two-directional train routes; 
+there are exactly $m$ routes, i-th route can be used to go from city $v_i$ to city $u-i$
+(and from $u_i to v_i)$, and it costs $w_i$ coins to use this route.\\
+Each city will be visited by 'Flayer', and the cost of the concert ticket in i-th city is $a_i$ coins.\\
+You have friends in every city of Berland, and they, knowing about your programming skills, 
+asked you to calculate the minimum possible number of coins they have to pay to visit the concert. 
+For every city i you have to compute the minimum number of coins a person from city $i$ has to spend to travel to 
+some city $j$ (or possibly stay in city i), attend a concert there, and return to city $i$ (if $j\neq i)$.\\
+Formally, for every you have to calculate , where $d(i,j)$ is the minimum number of coins you have to spend to travel 
+from city $i$ to city $j$. If there is no way to reach city $j$ from city $i$, then we consider $d(i,?j)$ to be infinitely large.\\
+\\
+\textbf{Input:}
+The first line contains two integers $n$ and $m$ ($2\leq n\leq 2*10^5$, $1\leq m\leq 2*10^5$).\\
+Then $m$ lines follow, i-th contains three integers $v_i$, $u_i$ and $w_i (1\leq v_i,u_i \neq u_i, 1 \leq w_i\leq 10^{12})$ 
+denoting i-th train route. There are no multiple train routes connecting the same pair of cities, that is, for each $(v,u)$ 
+neither extra $(v,u)$ nor $(u,v)$ present in input.\\
+The next line contains $n$ integers $a_1,a_2,...,a_k$ ($1\leq a_i\leq 10^{12})$ — price to attend the concert in i-th city.\\
+\\
+\textbf{Output:}
+Print $n$ integers. $i$-th of them must be equal to the minimum number of coins a person from city i has to spend to travel 
+to some city $j$ (or possibly stay in city $i$), attend a concert there, and return to city $i$ (if $j\neq i$).\\
+\\
+
+Interpretaci\'on del problema:
+
+Tenemos un grafo $G=(V,E)$ no dirigido y ponderado, y se pide optimizar $\forall$ ciudad $c_i$ el costo para asistir al concierto. Se le agrega al grafo la dificultad de de que los v\'ertices tambi\'en poseen un costo, que ser\'ia el pago del concierto en la ciudad, luego el problema no es por v\'ia directa buscar el camino de costo m\'inimo para cada cada v\'ertice del grafo, aunque desde un principio se tiene que los caminos de costo m\'inimo forman parte de la soluci\'on.\\
+Luego la idea intuitiva siempre fue intentar reducir el problema a un problema de c\'alculo de caminos de costo m\'inimo, para el cual conozco el algoritmo de Djikstra.\\
+La estrategia de soluci\'on presentada consiste en agregar un nuevo v\'ertice al grafo, llamemosle f, de tal forma que este v\'ertice tiene aristas con todos los v\'ertices del grafo, dandole a la arista $(f,i)$ que conecta a f con la ciudad i, el costo de ver la pel\'icula en esta ciuadad, luego hay buscar los camninos de costo m\'inimo desde este v\'ertice hacia todos los del grafo utiliznado el algoritmo de Djikstra. Para esto, hay que demostrar que el camino de costo m\'inimo de f a i es el camino de costo m\'inimo de i hasta la ciudad j(posible j = i) siendo j la opci\'on \'optima para i.
+ 
+
+\section{Demostración:}
+\textbf{ Definici\'on:} Sea un grafo $G= (V, E)$ se dice que G es ponderado si existe una funci\'on de costo 
+$w \rightarrow N_{+}$\footnote{se define sobre la restricci\'on del ejercicio, en sentido general $w = E \in R$.} tal que a cada
+arista $(u, v) \in E, w(uv)$ es el costo de esa arista\\
+\\
+
+
+
+\textbf{Definici\'on:} Sea $G = (V, E)$  un grafo ponderado y sea p un camino entre u y v, $p = {u = v_0, v_1, ... v_k}$, el costo de p es la suma de los costos de las aristas que unen los v\'ertices que forman parte de p. \\
+$w(p) = \sum\limits_{i=1}^{k} w(v_{i-1},v_i) $\\
+\\
+
+
+
+\textbf{Definici\'on:} Sea $G = (V, E)$ un grafo ponderado, se dice que p es un camino de costo m\'inimo de u a v, si $(w(p)$ es igual al m\'inimo entre el costo de todos los caminos que unen u y v.\\
+$w(p) = min (\{w(q): \forall q$ camino de $u \rightarrow v\})$\\
+\\
+
+
+
+\textbf{ Notaci\'on:} Se denota como $\delta (u, v)$ al costo de los caminos de costos m\'inimos de u a v.\\
+\\
+
+
+\textbf{Definici\'on:} Sea $G = (V, E)$ no dirigido y ponderado, $u, v \in V$.\\
+              Sea p un camino de u a v, tal que $p = \{u= v_0, v_1, v_{k-1}, v_k=v\}$ en $G$, $p^-$ ser\'a el camino de $v$ a $u$ tal que
+ $p^-1 =\{v=v_k,v_{k-1}, v_{k-2},...v_1,v_0 = u\}$ tal que contiene las mismas aristas de p pero en orden contrario.\\
+
+\textbf{Propiedad 1}: $w(p) = w(p^-)$\\
+
+\textit{ Demostraci\'on}: Directo de la definici\'on de $p^-$, si $w(p) \neq w(p^-)$ tendr\'ia que existir un p' o  en p una arista que no est\'e en p o en 
+$p^-$, lo  cual es una contradicci\'on.\\
+
+\textit{ \textbf{Lema 1}: Sea $G(V,E)$ un grafo no  dirigido y ponderado y sea p un camino de costo m\'inimo de $u \rightarrow v$, $p^-$ es tambi\'en un  camino  y 
+de costo m\'inimo de $v \rightarrow u$ y $\delta (u,v) = \delta (v,u)$.}\\
+
+\textit{Demostraci\'on:} Supongo que $p^-$ no es el camino de costo m\'inimo de $v \rightarrow u$, entonces existe un camino q de $v \rightarrow u$ tal que
+$w(q) < w(p^-)$.  Luego como el grafo es no dirigido, existe $q^-$ que  es tambi\'en un camino de u a v cuyo costo es menor que p, pero esto es
+una contradicci\'on con el hecho de que p sea un camino de costo m\'inimo de $u \rightarrow v$. Por tanto $p^-$ es un camino de costo m\'inimo de
+ $u \rightarrow v$ y $w(p^-) = \delta(v, u)$. Por tanto como $w(p) = w(p^-)$, $\delta (u, v) = \delta (v, u)$\\
+
+\textit{\textbf{Lema 2:} Los caminos de costo m\'inimo  en un grafo $G =(V, E)$ ponderado son caminos simples.}\\
+
+\textit{Demostraci\'on:} Supongamos que existe un camino de costo m\'inimo que no es simple.  Llam\'emosle p. Como p no es simple, entonces p contiene ciclos.\\
+Eliminando los ciclos de p, se obtuvo un camino p' tal que\\ 
+
+$w(p') = w(p)- w(C_i)$, siendo $C_i)$ las aristas que formaban ciclos en p $w(C_i) > 0$,\
+luego $w(p') < w(p)$ lo cual es una contradicci\'on  con el hecho de que p es un camino de costo m\'inimo.  Luego los caminos de costo m\'inimo son simples.\\
+
+\textit{\textbf{Lema 3:} Sea $G = (V,E)$ un grafo no dirigido y ponderado, el costo m\'inimo de ir de u a v y de v a u es $2 \delta (u, v)$.}\\
+
+\textit{Demostración:} \\
+Sea p un camino de costo m\'inimo de u a v y sea que un camino de costo m\'inimo de v a u (posible $q = p^-)$.  El costo m\'inimo de ir de u a v y de v a u\\
+        $w(uv;vu) = w() + w(q)$\\
+                    $\delta (u,v) + \delta (v,u)$ y por Lema 1 $\delta (u,v) = \delta (v,u)$\\  
+                    $\delta (u,v) + \delta (u, v)$\\
+                    $2\delta (u,v)$\\
+
+\textbf{Notaci\'on:} Denotemos $\tau(v)$ al costo m\'inimo de ir desde u, v y regresar de v a u.\\
+
+\textit{\textbf{Lema 4:} Sea el grafo $G= (V_G, E_G)$ no dirigido y ponderado con funci\'on de costo 
+$w_E = E_G  \rightarrow N_+$, si se define el grafo $H = (V_H = V_G = E_H = E_G)$
+no dirigido y ponderado cuya funci\'on de costo $w_H = E_H \rightarrow N_+$ se difine como $w_H(u, v) = 2w_G(u, v)$, 
+$\forall (u,v)\in E_H$ se cumple que
+$\delta (u, v)$ en H es igual $\tau(u, v)$ en $G$.}\\
+
+\textit{Demostraci\'on:} Por definici\'on $H$ y $G$ contienen los mismos v\'ertices y las mismas aristas, difieren en el costo, siendo el costo de cada arista en $H$ el doble
+del costo de la arista en G.  Luego tenemos $p_G {u=v_0,v_1,...,v_k=v}$ un camino que une a u y v en G, digamos que $p_H$ es el camino que une a u y v en $H$,
+ cuyos v\'ertices y aristas son los mismos, difiriendo entre uno y otro en el costo. Entonces, por definici\'on de $w_H$\\
+ \\
+                      $ w(p_H) = \sum\limits_{i=1}^{k}2w_G(v_{i-1},v_i)$\\
+                           $w(p_H) = 2\sum\limits_{i=1}^{k}w_G(v_{i-1},v_i)$,   $\sum\limits_{i=1}^{k}w_G(v_{i-1},v_i) = w(p_G)$\\
+                      $w(p_H) = 2w(p_G)$\\
+                      \\
+luego $forall$ $p_G$ camino en $G$ se cumple que $w(p_H)= 2w(p_G)$ y por tanto tambi\'en se cumplir\'a en los caminos de costo m\'inimo, por lo cual\\
+                      $\delta_H (u,v) = 2\delta_G (u,v)$ y como $\tau(u,v) = 2\delta (u,v)$\\
+                      $\delta_H (u,v) = \tau_G(u,v)$.\\
+\\
+
+
+\textit{\textbf{Lema 5:} Sea $G = V,E)$ un grafo no dirigido y ponderante y sea p un camino de costo m\'inimo de u a v, $p= {u=v_0, v_1, v_2,...v_{k-1}, v_k= v}$,
+$p_i = {u = v_0, ...v_i}$ es un camino de costo m\/inimo de u a $v_i = \forall i= 1,2,...k-1$}.\\
+\\
+\textit{Demostraci\'on:} Supongamos que $\exists i$ tal que $p_i$ no es un camino de costo m\'inimo de u a $v_i$, entonces existe un camino $f_i$ tal que  $q_i$  es un camino de costo m\'inimo de u a $v_i$ y $w(q_i) < w(p_i)$. Luego si se forma el camino t de u a v, tal que $t = {q_i, v_{i+1},... v_k = v}$
+$w(t) < w(p)$, lo cual es una contradicci\'on con el hecho de que p es un camino de costo m\'inimo de u a v. Luego el Lema 5 se cumple $v_i)$.\\
+\\
+
+\textit{\textbf{Teorema:} Dado el problema inicial, la soluci\'on planteada es correcta.}\\
+ 
+\textit{Demostraci\'on:}\\
+Sea $G=(V_G,F_G)$ el grafo de entrada y sea $a_i$ el costo de asistir al concierto en la ciudad, 
+$\forall$ $i$,$i = 1,...|V_G|$\\
+Sea $H=(V_H=V_G,E_H=E_G)$ un grafo no dirigido y ponderado cuya funci\'on de costo $w_H=E_H \rightarrow N_+$, se define como 
+$w_H (u,v) = 2w_E(u,v)$ $\forall (u,v) \in E_H$,
+por el Lema 4 se tiene que $\delta_H (u,v) = \tau_G(u,v)$.\\
+\\
+Sea ahora un v\'ertice f, se agrega f a $H$, tal que $H \cup f = (V_{H\cup f}, E_H \cup \{(f,v) \forall v \in V_H\}$ y 
+$w(f,v_i) = a_i$  $\forall i,1 = 1,...|V_G|$\\
+\\
+Esto es, se agrega a $H$ un v\'ertice tal que posee aristas que lo  conectan con cada v\'ertice del grafo, y el costo de estas aristas ser\'a igual al costo de asistir al concierto en la ciudad $i$ en el problema inicial.\\
+
+Luego $\forall v \in V_G = V_H = V_{H-{f}}$ se cumple que existe un camino de $v$ a $f$, ya que existen las aristas $(f,v_i)$.\\
+
+Sea \\
+$p_i= {v_i = v_0, v_1,...v_k, v_{k+1} = f}$, el camino de costo m\'inimo desde $v_i$  hasta f.\\
+
+$p_i = p_{ik} = \{v_i = v_0,...v_k \}\cup{v_k,f)}$ y $w(p_i) = w(p_{ik})_ {H\cup f} + w(v_k,f)_{H\cup f}$  
+y por Lema 5 se tiene que $p_{ik}$ es un camino de costo m\'inimo desde $v_i$ a $v_k$ y $w(v_k,f) = a_k$ y por Lema 3 $w(p_{ik})_{H\cup f} = 2w(p_{ik})_G $ y $w(v_k,f) = a_k$.\\
+
+Supongamos que $p_i$ no es la mejor opci\'on para la ciudad, entonces existe una ciudad $j$, $j\neq i$, tal que 2 veces el costo de ir de i a j, m\'as el costo de asistir al concierto
+en la ciudad j es menor que ir y asistir al concierto en la ciudad k, pore esto es que existir\'ia un camino
+$q^j_G$ en $G$ de $v_i$ a $v_j$ y que\\
+ $2w(q^j_G) + a_j < w(p_i)_{H\cup f}$\\
+ 
+ Pero esto ser\'ia que existe un camino $q^ij_H)$ tal que\\
+  $w(q^j_H) + a_j < w(p_i)_{H\cup f}$,\\
+ 
+Pero como $q^{i}_{H}$ es un camino en $H\cup f$ y $a_j = w(v_j, f)_{H\cup f}$, entonces existe un camino \\
+$q_i = q^j_H\cup \{(v_i,f)\}$ que une a $v_i$ con $f$ en $H\cup f$ tal que \\
+$w(q_i)_{H\cup f} < w(p_i)_{H\cup f}$, \\
+lo cual es una contradicci\'on con el hecho de que $p_i$ era el camino de
+costo m\'inimo.\\
+
+Cuando la mejor opci\'on para la ciudad i es asistir al concierto en la misma ciudad $i$, se demuestra an\'alogamente, siendo un caso espec\'ifico donde
+$p_i = (v_i,f)$ y $w(p_i) = w(v_i,f) = a_i$\\
+\\
+Luego hemos demostrado llevando el problema de su condici\'on A  a una condici\'on C que la soluci\'on en C es soluci\'on en A.\\
+
+Ahora, como por Lema 1 se tiene que dado que sea $p$ un camino de costo m\'inimo, $p^-$ ser\'a tambi\'en de costo m\'inimo y $\delta (v,u) = \delta (v,u)$
+como $p_i$  de costo m\'inimo de $v_i a f$ es soluci\'on del problema, lo ser\'a tambi\'en $p^-_i$ de $f$ a $v_i$ por dicho Lema 3.\\
+\\
+Utilizando este resultado la soluci\'on se implementa corriendo el algoritmo de Dijkstra desde el v\'ertice f sobre el grafo $H\cup f$ para obtener los 
+caminos de costo m\'inimo desde f, hasta $v_i \forall i, 1 = 1,... |V|$, que  por todo lo demostrado anteriormente constituye una soluci\'on 
+correcta al problema inicial.\\
+La correctitud del algoritmo de Dijkstra, se pasa a demostrar a continuaci\'on.\\
+\\\
+ 
+\begin{verbatim}
+ Djikstra(G,s):
+1    por cada vértice v en V[G]:
+2         d[v] = INF
+3    d[s] = 0, Q=V
+4    mientras haya vértices en Q:
+5         extraer u de Q tal que d[u] es mínima en Q
+6         Q = Q-{u}
+7         por cada vértice v en Q adyacente a u
+8             d[v] = min(d[v],d[u]+w(u,v))
+\end{verbatim}
+
+\textit{\textbf{Teorema:} Luego de la ejecuci\'on del algoritmo de Dijkstra $(G,s)$\\
+          $d[v] = \in (s,v) \forall v \in V[G]$.}\\
+
+\textit{Demostraci\'on:}\\ 
+Como $\delta (s,v)$ es el m\'inimo de s a v, se tiene que: $(1)\delta (s,v) \leq d([v]$ siendo $d[v]$ el costo del camino de s a $v$, mediante el cual
+ es alcanzado  $v$ durante la ejecuci\'on del algoritmo.\\
+Busquemos la igualdad demostrando que $d[v] \leq \delta(s,v)$. Inducci\'on sobre el orden es que son extra\'idos los v\'ertices de Q.\\
+Caso base: el primer nodo extra\'ido ser\'a S, y se tiene que $d[s] = 0 = \delta (s,s)$, lo cual se cumple.\\
+
+Ahora supongamos por hip\'otesis que se cumple para todo v\'ertice v que fue extra\'ido de Q antes que un v\'ertice u.\\ 
+Ahora tengamos $s = v_0, v_1, ...v_{a-1}, v_n = u$ un camino de costo m\'inimo de s a u,
+luego por Lema 5, \\
+$\delta (s,v) = \sum\limits^{j}_{k-1} w(v_{j-1},v_j)$, $ \forall j,j = 0,...n$\\
+
+Sea $i$ el m\'aximo, tal que $v_i$ fue extra\'ido de Q antes que u, por hip\'otesis se tiene que $\delta (s,v) > d[v_i]$ y como por (1) se tiene $\delta (s,v_i) \leq d[v_i]$ entonces \\
+$\delta (s,v_i) - d[v_i] = \sum\limits^{i}_{j-1} w(v_{j-1}, v_j)$.\\ 
+
+Ahora, durante la iteraci\'on en la cual $v_i$ fue extra\'ido de Q se tiene que para $v_{i+1}$ adyacente a $v_i$, 
+$d[v_{i+1}] \leq	d[v_i] + w(v_i, v_{i+1})$\\
+luego de terminada la iteraci\'on, lo cual se garantiza por la l\'inea 8.  Luego, como $d[v_i+1]$ no aumenta en ning\'un momento del algoritmo, se seguir\'a
+cumpliendo que $d[v_i+1] \ leq d[v_i] + w(v_i, v_{i+1})$ en la iteraci\'on en la que u es extra\'ido de Q, luego se tiene\\
+
+(3) $d[v_{i+1} \leq d[v_i] + w(v_i,v_{i+1} = \delta (s,v_i) + w(v_i, v_{i+1} = \delta (s,v_{i+1} = \delta (s,u)$.\\
+
+Supongamos que $v_{i+1} \neq u$, esto implica que $i \neq n-1$, luego antes de extraerse u, en una iteraci\'on anterior se tendr\'ia $\delta [s,u]v{i+1} < d[u]$
+por el camino de costo m\'inimo, lo cual implica (por 3) que $d[v_{i+1} < d[v]$, pero eso es una contradicci\'on con el hecho de que i era el m\'aximo tal 
+que $v_i$ se extrajo primero que u de Q. Luego tiene que $v_{i+1} = u$, con lo cual se cumple $d[u] \leq \delta (s,u)$ lo cual implica que
+$d[u] = \delta (s,u)$. Luego de terminada la ejecuci\'on del algoritmo de Dijkstra $d[v] = \delta (s,v) \forall vertice v \in V[G]$.\\
+
+
+El algoritmo de Djikstra implementedo con cola con prioridad tiene un complejidad de temporal de $O(|E|log|V|)$, ya que por cada v\'ertice se recorre su lista de adyacencia, lo que, luego de finalizado el algoritmo se ha recorri\'o toda la lista de adyacencia del grafo. Cada operaci\'on de extraer el m\'inimo desde se realiza es $O(log|V|)$ y se realiza $|V|$ veces, se tiene
+, cada operaci\'on para actualizar en la cola de prioridad es $O(logV)$ y se realiza a lo sumo por cada arista, o sea $O(|E|)$,
+por lo tanto se tiene que se realiza $O(|V|+|E|)$ operaciones sobre la cola con prioridad, por lo cual la complejidad del algoritmo es $O(|V|log|V|+|E|log|V|)$ que es $O(|E|log|V|)$. Crear el heap es $O(log|V|)$. Se utiliza la estructura del m\'odulo heap q de python.\\
+
+\end{document}

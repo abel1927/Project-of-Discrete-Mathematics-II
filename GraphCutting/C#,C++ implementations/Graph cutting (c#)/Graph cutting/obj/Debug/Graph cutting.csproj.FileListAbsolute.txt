@@ -1,0 +1,18 @@
+C:\Users\Arielito\Desktop\Graph cutting\Graph cutting\bin\Debug\Graph cutting.exe.config
+C:\Users\Arielito\Desktop\Graph cutting\Graph cutting\bin\Debug\Graph cutting.exe
+C:\Users\Arielito\Desktop\Graph cutting\Graph cutting\bin\Debug\Graph cutting.pdb
+C:\Users\Arielito\Desktop\Graph cutting\Graph cutting\obj\Debug\Graph cutting.csprojResolveAssemblyReference.cache
+C:\Users\Arielito\Desktop\Graph cutting\Graph cutting\obj\Debug\Graph cutting.exe
+C:\Users\Arielito\Desktop\Graph cutting\Graph cutting\obj\Debug\Graph cutting.pdb
+D:\Escuela\Graph Cutting\soluciones\soluciones\Graph cutting (c#)\Graph cutting\bin\Debug\Graph cutting.exe.config
+D:\Escuela\Graph Cutting\soluciones\soluciones\Graph cutting (c#)\Graph cutting\obj\Debug\Graph cutting.exe
+D:\Escuela\Graph Cutting\soluciones\soluciones\Graph cutting (c#)\Graph cutting\obj\Debug\Graph cutting.pdb
+D:\Escuela\Graph Cutting\soluciones\soluciones\Graph cutting (c#)\Graph cutting\bin\Debug\Graph cutting.exe
+D:\Escuela\Graph Cutting\soluciones\soluciones\Graph cutting (c#)\Graph cutting\bin\Debug\Graph cutting.pdb
+D:\Escuela\Graph Cutting\soluciones\soluciones\Graph cutting (c#)\Graph cutting\obj\Debug\Graph cutting.csprojResolveAssemblyReference.cache
+D:\Escuela\Graph Cutting\Soluciones aceptadas\Graph cutting (c#)\Graph cutting\bin\Debug\Graph cutting.exe.config
+D:\Escuela\Graph Cutting\Soluciones aceptadas\Graph cutting (c#)\Graph cutting\obj\Debug\Graph cutting.exe
+D:\Escuela\Graph Cutting\Soluciones aceptadas\Graph cutting (c#)\Graph cutting\obj\Debug\Graph cutting.pdb
+D:\Escuela\Graph Cutting\Soluciones aceptadas\Graph cutting (c#)\Graph cutting\bin\Debug\Graph cutting.exe
+D:\Escuela\Graph Cutting\Soluciones aceptadas\Graph cutting (c#)\Graph cutting\bin\Debug\Graph cutting.pdb
+D:\Escuela\Graph Cutting\Soluciones aceptadas\Graph cutting (c#)\Graph cutting\obj\Debug\Graph cutting.csprojResolveAssemblyReference.cache

@@ -1,0 +1,586 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{manfnt}
+\usepackage{amsfonts,amsmath, amsthm}
+\usepackage[margin=2cm]{geometry}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+
+\begin{document}
+
+  \title{Informe\\
+  Matem\'atica Discreta II\\
+     Minimum spanning tree for each edge\\
+     Problema:609E}
+  \author{Abel Molina S\'anchez\\
+  Grupo 2-11\\
+  Ciencias de la Computaci\'on\\
+  Universidad de La Habana}
+    \maketitle  
+
+\newpage
+
+\section{Problema}
+
+
+
+\begin{center}
+ E. Minimum spanning tree for each edge
+\end{center}
+                                                 
+Connected undirected weighted graph without self-loops and multiple edges is given. Graph contains $n$ vertices and $m$ edges.\\
+For each edge $(u,v)$ find the minimal possible weight of the spanning tree that contains the edge $(u,v)$.\\
+The weight of the spanning tree is the sum of weights of all edges included in spanning tree.\\
+\\
+\textbf{ Input:}
+First line contains two integers $n$ and $m$ $(1\leq n \leq 2·10^5$, $n-1\leq m\leq 2·10^5)$ — the number of vertices and edges in graph.
+Each of the next $m$ lines contains three integers $u_i,v_i,w_i$($1\leq u_i,v_i\leq n, u_i\neq v_i, 1\leq w_i \leq 10^9)$ — the endpoints of the $i$-th edge
+and its weight.\\
+\\
+\textbf{Output:}
+Print $m$ lines. $i$-th line should contain the minimal possible weight of the spanning tree that contains $i$-th edge.\\
+The edges are numbered from $1$ to $m$ in order of their appearing in input.\\
+\\
+
+
+
+
+ 
+\textbf{Interpretaci\'on del problema:} \\
+
+Se recibe como entrada del problema un grafo $G=(V,E)$ simple, no dirigido, conexo y ponderado y se quiere buscar el costo del \'arbol abarcador de costo m\'inimo(minimum spanning tree(mst))
+ que contiene entre sus aristas a la arista i $\forall i, i = 1, 2,...m = |E|$.\\
+ 
+\textbf{ Primera Idea}: Conociendo el algoritmo de Kruskal que dado un grafo devuelve su \'arbol abarcador de costo m\'inimo, bas\'andose en la ordenaci\'on de las aristas por 
+su peso, no ordenar las aristas de antemano y en cada ejecuci\'on del algoritmo a
+la arista i asignarle un peso m\'inimo inferior a todas, en este caso 0, de tal forma que una vez ordenadas las aristas durante la ejecuci\'on del algoritmo de Kruskal \'esta sea la de peso m\'inimo, por lo cual formar\'a parte del mst, luego una vez obtenido el costo del mst le sumar\'ia el costo de la arista para tener su soluci\'on. Este proceso se
+repetir\'ia por cada arista, con lo cual se estar\'ian ordenando las aristas $|E|$, lo cual es bastante ineficiente ya que la complejidad temporal de la soluci\'on ser\'ia $O(|E|^2 log |V|)$, pero se realizar\'ian $|E|$ operaciones de $O(|E|log|E|)$.\\
+\\
+
+ 
+\textbf{Idea de soluci\'on}: Utilizando el algoritmo de Kruskal, determinar T, un mst del grafo original. Como no existir\'a
+otro mst con menor costo porque ser\'ia una contradicci\'on con el hecho de que es m\'inimo, para todas las aristas que formen parte
+ de T, su soluci\'on ser\'ia el costo de T.  Luego por cada arista $e\in E[G]/E[T]$,  la idea es agregarla al mst; al 
+agregarla se formar\'ia un ciclo, ya que T es un \'arbol, por lo cual es necesario retirar una arista para mantener la condici\'on de \'arbol. Entonces,
+ se busca y se elimina la mayor arista distinta de e que forma parte de este ciclo, o lo que es lo mismo, al buscar
+ la soluci\'on para la arista $e=(u,v)$, busco la mayor arista que forma parte del camino $p$ que une a u y a v en T y la retiro, luego agrego a (u, v).\\
+ Sobre esta idea, al ser T un \'arbol se puede notar que el lca(ancentro com\'un m\'as cercano), entre u y v,digamosle l, formar\'a parte de p.  Luego, la arista de mayor peso en el camino p, ser\'a tambi\'en la mayor arista entre los caminos $p_{ul}$ y 
+ $p_{vl}$ que unen respectivamente a u y v con l. Luego una vez hallado T, la soluci\'on pasa por cada arista saber el costo
+  de la arista de mayor costo entre los caminos desde sus extremos hasta el lca de sus extremos, restarlo al peso de T y sumar el peso de la arista a la que se le busca soluci\'on.\\
+ Ahora veamos como buscar el recorrido desde u y v(los extremos de una arista) hasta su lca.\\
+ Esto se puede realizar de forma lineal por la altura del \'arbol, la altura del \'arbol se\'a a lo sumo $|V|-1$, por lo que podemos decir que hallar el lca de dos v\'ertices en el \'arbol lo podemos realizar en $O(|V|)$. Si realizamos esta operaci\'on 
+ por cada aristas que no forma parte de T, tendremos que encontrar la soluci\'on ser\'a $O(|E|log|V|) + O(|E||V|)$ que es 
+  $O(|E||V|)$ que ya mejora la idea anterior.\\
+  Ahora, existen varios m\'etodos y t\'ecnicas para hallar el lca que tienen una cota no lineal. Para la soluci\'on del problema voy a utiizar la t\'ecnica de Binary Lifting, con la cual en $O(|V|log|V|)$ precomputo los ancestros binarios de todos los 
+  v\'ertices del \'arbol y el peso m\'aximo en el camino hasta cada uno. Luego la b\'usqueda de la soluci\'on para cada arista se podr\'a realizar en $O(log|V|)$, utilizando los valores precalculados. Hallar la soluci\'on para todas las aristas quedar\'a en 
+  $O(|E|log|V|)$ que es tambi\'en el tiempo de ejecuci\'on para hallar el mst, por lo cual el algoritmo de soluci\'on quedar\'ia en $O(|E|log|V|)$, mejorando las ideas anteriores.\\
+  Luego de explicar la idea de la soluci\'on paso a demostrar todo lo planteado.\\
+ \\
+ 
+ \newpage
+ 
+ 
+\section{\textbf{Demostraciones}}
+
+ 
+\textit{ \textbf{Lema 1:} Al quitar una arista del camino p de u a v en el \'arbol, \'este se divide en dos componentes conexas de tal forma que v est\'e en una y u en  la otra.}\\
+
+\textit{Demostraci\'on:} Supongo que u y v siguen en la misma componente conexa, entonces existir\'a un camino $q \neq p$ que une a u y a  en T, pero \'esta es una contradicci\'on con el hecho de que todo par de v\'ertices est\'e unido por un \'unico camino es un \'arbol.\\
+\\
+
+
+\textit{ \textbf{Lema 3:} Si una arista (u, v) no es parte de un \'arbol abarcador (spanning tree), se puede cambiar la arista (u, v) por una de las aristas que forman parte del camino de u a v en el \'arbol y el resultado seguir\'a siendo un \'arbol abarcador.}\\
+\\
+\textit{Demostraci\'on:} Si removemos una arista intermedia (x, y) en el camino (u, v) en el \'arbol, se crear\'an dos sub\'arboles, donde u y v formar\'an parte de un 
+sub\'arbol distinto (Lema 1).  Luego, por lo mismo existe un \'unico camino desde 
+cualquier v\'ertice del sub\'arbol de v hasta v (y viceversa) y desde el sub\'arbol de u hasta u (y viceversa).  Luego conecto la arista (u, v) y entonces
+existe un \'unico camino desde cualquier v\'ertice del sub\'arbol de u hasta cualquier v\'ertice del sub\'arbol de v, con lo cual es conexo y se mantiene la cantidad de aristas
+en $n-1 $\\
+\\
+
+
+Ahora, lo primero es saber si la idea de soluci\'on es correcta para el problema dado, lo cual se demostrar\'a con el siguiente teorema:\\
+
+\textit{\textbf{Teorema(Correctitud)} Sea $G=(V,E)$ un grafo simple,conexo, no dirigido y ponderado, sea T un \'arbol abarcador de costo m\'inimo(mst) de $G$, sea la arista $(u,v)\in E$ tal que $(u,v)\notin T$, luego de insertar la arista $(u,v)$ en T y extraer la 
+arista de mayor peso del ciclo que se forma en en T, el \'arbol resultante es un mst que contiene a $(u,v)$.}
+
+\textit{Demostraci\'on:}\\
+Se tiene T mst de G.\\
+Sea xy la arista de peso m\'aximo en el camino $p(u-v)$ en T.\\
+Sea $T' = T- xy + uv$ (por Lema 3, $T'$ sigue siendo \'arbol abarcador de $G$)\\
+Se tiene que :\\
+$w(T') = w(T) - w(xy) + w(uv) \geq w(x, y)$, si es igual $T'$ mst que contiene a $(u,v)$.\\
+Luego trabajemos con $w(uv) > w(xy)$\\
+\\
+Supongamos que T' no es un mst que contiene a u, v.\\
+Entonces tiene que existir al menos una arista $e$ tal que:\\
+$w(ij) > w(e)$\\ 
+$w(T') +  w(e) - w(ij) < w(T')$\\
+\\
+Siendo $(i,j)$ una arista que forma parte del ciclo que se forma al a\~nadir e a $T'$ y $ (u,v) \neq (i,j) $ , porque tiene que estar $(u,v)$ en el \'arbol para que sea un mst que lo contiene.\\
+\\
+Sea $T" = T' - ij + e$\\
+        =  $T -xy + uv - ij + e$\\
+\\
+$w(T") < w(T')$\\
+$w(T - xy + uv - ij + e) < w(T - xy + u, v)$ luego quito $(u,v)$ y coloco a $(x,y)$\\
+$w(T - xy + xy - u,v + u,v - ij + e) < w(T - xy + xy + u,v - u,v)$\\
+$w(T - ij + e) < w(T)$, lo cual es una contradicci\'on con el hecho de que T es mst de G.\\
+Con lo cual queda demostrado el teorema y la correctitud del algoritmo de soluci\'on.\\
+\\
+
+Ahora demostremos la correctitud de cada paso de la implementaci\'on\\
+\\
+
+%inicio tine que ver con Kruskall
+
+\textit{  \textbf{Lema 2:} Para todo (u, v) que no pertenece a T (mst de G), la arista h que une la componente conexa de u con la de v durante la ejecuci\'on de Kruskal es la de peso m\'aximo del camino p de u - v.}\\
+
+\textit{Demostraci\'on:} Supongo que la que une la componente de u y v no sea la m\'as grande del camino, entonces $\Rightarrow \exists$ una arista e cuyo
+peso $w(e) > w (h)$ y que forma parte  del camino p. Si $ w(e) > w(h)$  entonces e fue ingresada luego de h, ya que por orden de $h < e$ ser\'ia seleccionada primero, 
+por lo cual al agregar e, se formar\'ia un ciclo ya que h conecta a $u... v$. \\
+
+
+%fin tine que ver con Kruskall
+
+
+
+
+\subsection{\textbf{Binary Lifting}}
+
+
+\textbf{Definici\'on:} Llamamos \'arbol con ra\'iz a un \'arbol del cual se selecciona un v\'ertice que llamaremos ra\'iz.\\
+\\
+
+
+\textbf{Definici\'on:} Llamaremos ancestro de un v\'ertice u de un \'arbol con ra\'iz, a un v\'ertice v que se encuentra en el camino desde la ra\'iz hasta u,\\
+\\
+
+
+
+\textbf{Definici\'on:} Llamaremos padre de un v\'ertice u en un \'arbol con ra\'iz a un v\'ertice v que es el ancestro de u m\'as cercano a u. O sea, en el camino de la ra\'iz a u, sea (v,u) la \'ultima arista, entonces v ser\'a el padre de u\\
+\\
+
+
+\textbf{Definici\'on:} Se dice que el v\'ertice u es hijo del v\'ertice v si v es padre de u.\\
+\\
+
+
+\textbf{Definici\'on:} En un \'arbol con ra\'iz se dice que un v\'ertice u es descendiente de un v\'ertice v, si v es ancestro de u.\\
+\\
+
+
+\textbf{Definici\'on:} Dado un v\'ertice de un \'arbol con ra\'iz se llama nivel a la distancia del  camino desde la ra\'iz hasta ese v\'ertice. Nivel de la ra\'iz = 0.\\
+\\
+
+
+\textbf{Definici\'on:} Se llama altura (h) al nivel m\'aximo de un v\'ertice de un \'arbol.\\
+\\
+
+
+\textit{\textbf{Lema 4:} Dado un \'arbol con n v\'ertices su altura $h \leq n - 1$.}\\
+\\
+
+\textit{Demostraci\'on:} Directo por el hecho de que un \'arbol tiene $n-1$ aristas. Por lo cual no puede existir un camino dentro del \'arbol cuya distancia sea $ > n-1$ porque eso implicar\'ia la existencia de un ciclo, lo cual a su vez vuelve a contradecir el hecho de que sea un \'arbol.\\
+\\
+
+
+
+\textbf{Definici\'on:} Se llama $lca(u,v)$ al ancestro com\'un m\'as cercano para los v\'ertices u, v.  Esto es el v\'ertice l de mayor nivel que forma parte tanto del camino de la ra\'iz a v, como del camino de la ra\'iz a u.\\
+\\
+
+
+
+\textit{ \textbf {Lema 5}. Si v forma parte del camino desde la ra\'iz a u en un \'arbol T, v es el $lca(v,u)$}.\\
+\\
+\textit{Demostración:} Se cumple, ya que de existir,  tendr\'ia que existir un $lca (v, u) \neq v$. $nivel[l] > nivel [v]$, lo cual es una contradicci\'on con el hecho de ser v ancestro de u.\\
+\\
+
+
+
+
+\textbf{Definici\'on:} Un ancestro binario de un v\'ertice v es un ancestro de v que est\'a a una distancia potencia de 2 de v.\\
+\\
+
+
+\textbf{Definici\'on:} v es el j-\'esimo ancestro binario de u, si v es ancestro de u y est\'a a distancia $2^j$ de u.\\
+\\
+
+
+\textit{ \textbf{ Lema 6:} Un v\'ertice v de un \'arbol con n v\'ertices puede tener a lo sumo $log n - 1$ ancestros binarios.}\\
+\\
+Supongo que existe un v\'ertice del \'arbol que tiene $\geq log n$ ancestros binarios, digamos que tiene $log n$, luego el ancestro m\'as lejano estar\'a a distancia  $2^{log n} = n$ de v, lo cual indica que existen n aristas en el camino de v a su ancestro pero esto es una contradicci\'on con el hecho de que es un \'arbol con n v\'ertices (porque tiene n - 1 aristas).\\
+\\
+
+
+%Binary Lifting demostracion empieza aqui
+
+
+
+La idea de la t\'ecnica de Benary Lifting es precalcular en una matriz $dp [1, n] [1, log n]$ donde $dp [v] [i]$  contiene la referencia al $2^i$ ancestro del v\'ertice v,  bas\'andose en la siguiente recursi\'on:\\
+\\
+                       $dp[v] [i] = padre[v]$ si $j = 0$, $(padre[raiz]=-1)$\\
+                       $dp[v] [i] = dp [dp[v] [i - 1]] [i - 1]$ si $i > 0$\\
+\\
+Esto quiere decir que el k-\'esimo ancestro binario de un v\'ertice, es el (k-1)-\'esimo  ancestro binario de su $(k-1)$-\'esimo ancestro binario. Esto es,en otras palabras, que el ancestro  de un nodo v que est\'a a distancia $2^k$ de v, es el mismo que el que se encuentra a distancia $2^{k-1}$ del ancestro que est\'a a distancia $2^{k-1}$ de v. Y esto es que que 
+$2^k = 2^{k-1} + 2^{k-1}$\\
+\\ 
+
+Demostraci\'on de la recursi\'on:\\
+\\
+Inducci\'on sobre las potencias de 2:\\
+\\
+Sea $n = 1$\\
+$2^1 = 2 = 2^0 + 2^0 = 1 + 1$. Luego se cumple para $n = 1$\\
+\\
+Hip\'otesis: se cumple para $n = k$\\
+                            $2^k = 2^{k-1} + 2^k-1$ \\
+Sea $n = k + 1$\\ 
+    $2^{k+1} = 2^k . 2$ por hip\'otesis $2^k = 2^{k-1} + 2 ^{k-1}$\\
+    $2^{k+1} = (2^{k-1} + 2^{k-1}) . 2$\\
+    $2^{k+1} = 2.2^{k-1} + 2.2^{k-1}$\\
+    $2^{k+1} = 2^k + 2^k$, luego se cumple para $n=k$, por tanto, por inducci\'on matem\'atica se cumple para todo $n \in N$.\\
+\\
+
+
+
+
+
+% demostracion del metodo lca
+
+
+\subsubsection{\textbf{lca}}
+
+
+\textbf{Demostraci\'on de la correctitud del m\'etodo $lca(u, v)$}\\
+\\
+Lo primero que se busca hacer es igualar los niveles de u y v dentro del \'arbol. Sin p\'erdida de generalidad seleccionamos v como el de mayor nivel de u y v. La idea del m\'etodo es ir 'subiendo' por los ancestros de v, utilizando los ancestros binarios de \'este hasta alcanzar un ancestro de v al mismo nivel 	que u y guardando en cada paso de la arista de mayor peso encontradda en el camino que est\'an computadas en dw.\\
+\\
+Luego, si u = v, entonces v ser\'ia el lca (u,v) y se retorna el costo de la arista de mayor peso encontrada en el camino.  Si u no es igual a v, se busca subir  a u y v hasta el nivel inmediatamente superior al del lca (u,v), guardando en cada paso el peso de la arista de mayor costo encontrada entre
+los caminos de u y v hacia el lca.  Luego se retorna la mayor entre: las aristas que unen a u y lca(u,v), v y lca,v y la mayor encontrada anteriormente durante los caminos de u,v hasta nivel $[lca (u,v)] + 1$. \\
+\\
+
+
+\textit{ \textbf{Lema 7:} Sea w el i-\'esimo ancestro binario de un v\'ertice v est\'a en  el nivel $[w] = nivel\forall = 2^i$}\\
+\\
+\textit{Demostración:} Directo, por la definici\'on de ancestro binario y de nivel.  Si nivel es la distancia desde la ra\'iz hasta v, y el ancestro binario i-\'esimo de v es el ancestro de v que est\'a a distancia $2^i$ de v. Luego,  sea w el i-\'esimo ancestro binario de v, la distancia de w a la ra\'iz va a ser igual:\\
+(sea r la ra\'iz)\\
+\\
+                    $d(r,w) = d(r,v) - d(v,w)$, sustituyendo\\
+                    $nivel(w) = nivel (v) - 2^i$\\
+\\
+Demostrar la correctitud de lca: \\
+\\
+
+
+\textit{ \textbf{Lema 8:} La diferencia f entre el nivel de v y u tiene que ser a lo sumo $n-1$}\\
+\\
+\textit{Demostración:} Por Lema 1 (altura) se sabe que el mayor nivel de un \'arb ol de n v\'ertices es $n-1$ y se sabe que el menor nivel por definici\'on es el de la ra\'iz, cuyo nivel es 0.  Luego, supongamos que la altura del \'arbol es m\'axima, sea v un v\'ertice del \'arbol en el nivel $n-1$, su diferencia con el nivel de la ra\'iz es $n-1$;  como no hay otro nodo en el \'arbol cuyo nivel sea menor que la ra\'iz, entonces la diferencia f entre el nivel de u y  el nivel de v est\'a acotada por $n-1$.\\
+$nivel [v] - nivel [u] \leq n-1$.\\
+\\
+
+
+
+\textit{ \textbf{Lema 9:} Todo n\'umero entero $n > 0$ se puede descomponer como suma de potencias de 2.}\\
+\\
+\textit{Demostración:}\\
+Inducci\'on:\\
+Caso base $n = 1$ \\
+          $1 = 2^0$\\
+\\
+Hip\'otesis: se cumple para $n = k - 1$ ($k - 1$ puede descomponerse como suma de potencias de 2).\\
+\\
+Sea $n = k$\\
+    $k = (k-1) + 1$\\
+    $k = (k-1) + 2^0$ (por hip\'otesis $k-1$ se descompone como suma de potencias de 2, luego sea q una descomposic\'on de $k-1$ en suma de potencias de 2)\\
+    $k = q + 2^0$\\
+\\
+por lo cual se cumple para $n = k$. Por inducci\'on matem\'atica se cumple para todo $n \in N$, $n > 0$\\
+
+
+
+\textit{ \textbf{Lema 10:} $\forall n\in N_+ ,\exists i \in N$, tal que $N - 2^i \geq 0$.}\\
+\\
+Caso base $n = 1$\\
+          $1 - 2^0 = 1 - 1 = 0$\\
+\\
+Hip\'otesis: se cumple para $n = k- 1$ $\exists i > 0$ tal que $(k - 1) - i \geq 0$\\
+Sea $n = k$\\
+    $k = (k-1) + 1$\\
+    $k = (k-1) + 2^0$ por hip\'otesis de inducci\'on para k-1 existe un i que cumple $(k-1) - 2^i \geq 0$\\
+Sea ese i tal que $(k-1) - 2^i \geq 0$\\
+                   $k - 2^i = (k - 1) - 2^i + 1$\\            
+                   $k - 2^i = (k-1) - 2^i \geq 0$\\
+                   $k - 2^i \leq 1 \geq 0$\\
+\\
+Luego se cumple para $n = k$.\\
+
+
+Luego, como para todo n natural $ \exists i \in N$ tal que $n - 2^i \geq 0$, tambi\'en existe un m\'aximo i que lo cumple.\\
+\\	
+
+
+
+\textit{ \textbf{Lema 11:} Sea n un n\'umero natural, sea i el mayor natural tal que $n-2^i \geq 0$, entonces $n - 2^i < 2^i$}\\
+Supongo que $n - 2^i \geq 2^i$, entonces\\
+            $n - 2^i - 2^i \geq 0$\\
+            $n - (2.2^i) \geq 0$\\
+            $n - 2^{i+1} \geq 0$\\
+\\
+luego existe $q = i + 1$ tal que $n - 2^q \geq 0$ lo cual es una contradicci\'on con el hecho de que i es el m\'aximo.\\
+\\
+
+
+
+\textit{ \textbf{Lema 12:} Sea n n\'umero natural > 0, sea i la mayor potencia de 2 tal que $n-2^i = q>0$. La mayor potencia k de 2 tal que $q-2^k \geq 0$ cumple que $k < i$.}
+\\
+Supongo que $k \geq i$, por Lema 1 $n - 2^i < 2^i$\\
+            $q < 2^i$\\
+            $q-2^k < 2^i - 2^k$ \\
+            $q = 2^k \geq 0$\\
+            $0 \leq q - 2^k < 2^i - 2^k$ pero como $i \leq k$, $2^i \leq 2^k \rightarrow 2^i - 2^k \leq 0$\\
+            $0 \leq q - 2^k < 2^i - 2^k \leq 0$\\
+            $0 \leq q - 2^k < 0$\\
+lo cual es una contradicci\'on. Por tanto $k < i$.\\
+\\
+
+
+
+Teorema 1: Luego de terminado el primer ciclo for,  en el m\'etodo lca, el $nivel [v] = nivel[v]$. \\
+
+\textit{Demostración:}\\
+Si al inicio, el $nivel [v] = nivel [u]$, entonces se cumple. \\
+Luego se garantiza que de ser distintos $nivel [v] > nivel [u]$.\\
+Luego por Lema 8 se garantiza que la diferencia f entre nivel [v] y nivel [u] es a lo sumo $n-1$.
+Como $n-1 < 2^{log_2n} = n$ se garantiza por el Lema 9 que existe en el conjunto ${0, 1,..., log n}$ en i tal que se cumple que $f - 2^i \geq 0$. Luego se garantiza que hay m\'aximo que lo cumple.  Como se itera desde $i = log n,...,0$ se garantiza que el primer i que lo cumple ser\'a el m\'aximo.  Luego por Lema 11 se garantiza que luego de encontrar un m\'aximo tal que  $f - 2^i \geq 0$ sigue existiendo un m\'aximo  en el conjunto ${i, i-1,...,0}$ que cumple que la nueva diferencia $f'- 2^i \geq 0$.  Luego,  si es un momento intermedio la diferencia f entre $nivel [v]$ y $nivel [u]$ se hace 0, ya se cumple.  Si no por la uni\'on del Lema 9 y el Lema 11 se garantiza que exisir\'a un i que sigue cumpliendo la condici\'on y que ser\'a m\'aximo.  Luego como no hay descenso infinito en los naturales, la diferencia f se har\'a 0 luego de finalizado el algoritmo, por lo cual $nivel [v] = nivel [u]$.\\
+\\
+
+
+Luego:\\
+\\
+
+
+Caso 1: si u es igual a v, significa que u es ancestro de v y por Lema 4, $v = lca (u, v)$.\\
+\\
+
+
+Como en cada paso se va manteniendo el peso de la mayor arista encontrada, se garantiza que ese ser\'a el valor retornado.\\
+\\
+
+
+
+Caso 2:  $u' \neq v$  significa que u no es el $lca (u,v)$ y existe entonces un v\'ertice l, cuyo $nivel [l] < nivel [u] y nivel[v]$. Luego si u y v siguen el recorrido de sus ancestros al mismo nivel, el primer nivel tal que $u = v$ ser\'a el nivel del lca, luego u y v seguir\'an el camino
+de sus ancestros hasta el nivel $[l] + 1$, de tal forma que sea $padre [u] = padre [v] = l$.\\
+\\
+
+
+Teorema 2: Luego de la ejecuci\'on del segundo ciclo for de lca(u,v), se cumple que $nivel[u] = nivel [v] = nivel [l] + 1$, siendo $l = lca(u,v)$.\\
+\\
+
+\textit{Demostración:} Sin p\'erdida de generalidad utilicemos $nivel [v]$ como $nivel [u]$ y $nivel [v]$.\\
+\\
+Sea $f = nivel [v] - nivel [l]$, $f > 0$ porque si $f = 0$ como $lca(u, v) \neq v$ porque sino no llegar\'ia a esta instancia del algoritmo, sino una contradicci\'on con el hecho de ser l el lca(u,v), por lo tanto $f > 0$.\\
+\\
+A partir de ahora consideramos f como la diferencia que se obtendr\'ia en cada iteraci\'on en caso de cumplirse la condici\'on if. Esto es para saber el momento en el que f se podr\'ia hacer 0  en el algoritmo, ya que esto no puede ocurrir como se intenta demostrar.\\
+\\
+Luego por Lema 10 se garantiza la existencia de un i tal que $f - 2^i \geq 0$, como existe i, existe i que ser\'a el m\'aximo que lo cumpla, luego como se itera desde $i = log n, ..., 0$ se garantiza que en cada momento el primer i que lo cumple ser\'a el m\'aximo para f.\\
+\\
+Ahora, como para todo ancestro w de u y v, tal que $nivel [w] \leq nivel [l]$  (posible w = l)se cumple que es un ancestro com\'un por ser l el lca, si en la iteraci\'on son alcanzables como un i-\'esimo ancestro, se cumplir\'a que $dp [u] [i] = dp[v] [i]$, lo que en la condici\'on if se garantiza que no ocurra ese salto, ya que ese recorrido no forma parte del camino de u, v.  Luego puede ocurrir que $w = l$,  por lo cual de no actualizar se podr\'ia perder el recorrido hasta alcanzar $nivel [l] + 1$ que es lo que se busca, esto no ocurre por el siguiente lema: \\
+\\
+\textit{ \textbf{Lema 12:} Sea $k = 2^i,  k-1 = \sum\limits_{j=0}^{i-1}2^i$}\\
+\\
+\textit{Demostración:} como $ \sum\limits_{j=0}^{i-1}2^i$ es una serie geom\'etrica, se tiene que:
+\\
+$S = \frac{-1+2^{i-1+1}}{-1+2} = -1 + 2^i$  como $2^i = k$, ser\'a \\
+$S =   k - 1$\\
+\\                                                                        
+De esta forma se garantiza que  aunque no haya ocurrido el paso hasta el ancestro $2^i$, se alcanzar\'a el ancestro $2^i - 1$ en las siguientes iteraciones, con 
+lo cual se cumplir\'ia el teorema.
+
+Ahora, digamos que  $l \neq w$, en toda iteraci\'on,  por Lema 4,  para f seguir\'a existiendo un $i$ en las iteraciones 
+$i,i-1,..., 0$, tal que $f - 2^i \geq 0$, y 
+como no hay descenso infinito en los n\'umeros N, f va a ser igual a 0 en una iteraci\'on.\\
+ Digamos que fue en la iteraci\'on $K > 0$, luego como $f = 0$
+$dp[v] [k] = dp[v] [k] = l$, por la condici\'on if no se realizar\'a ese salto y por el Lema 12 se demuestra que el $nivel[l] + 1$ se alcanza en
+las siguientes iteraciones, con lo cual se cumplir\'ia el teorema.  Ahora, digamos que $f = 0$ se alcanza en la \'ultima iteraci\'on, esto es $f - 2^0 = 0$,
+esto es $f = 1$ y como por la condici\'on  if u y v se mantienen en su nivel, entonces se cumple que est\'an en el $nivel [l] + 1$, con lo cual
+queda demostrado.\\
+
+
+Luego se retorna el valor de la arista de peso m\'aximo, que a su vez ser\'a el mayor entre el peso de la arista de mayor peso en todo el recorrido desde u y v, hasta los
+ancestros a $nivel [l] + 1$ y las aristas que unen a u y v con l, respectivamente.\\
+
+
+
+
+An\'alisis temporal de lca:\\
+
+Cada una de las operaciones que se realizan durante la ejecuci\'on de los ciclos for dentro del m\'etodo lca (u,v), son $O(1)$.\\
+
+Luego, en cada ciclo for se realizan  $log n iteraciones$ siendo $n = |V|$, luego el tiempo de ejecuci\'on del m\'etodo est\'a acotado
+ por $O(log |V| + log |V|)$ que es $O(log|V|)$.
+\\
+
+
+% fin LCA
+
+\subsubsection{\textbf{dft:precalculo}}
+
+\textbf{Definición:} Se llama descendientes de un v\'ertice v en un \'arbol a los v\'ertices para los cuales v es un ancestro.\\
+
+\textbf{Definición:} Se llama hijo de un v\'ertice v a un v\'ertice u tal que u es descendiente de v y adyacente a \'el.\\
+
+\textbf{Definición:} Se le llama  hoja a un v\'ertice h en un \'arbol tal que no tiene descendientes.\\ 
+ 
+\textbf{Definición:} Llamemos visitor a un v\'ertice v al momento que se llama a $df + (v,pv$.\\
+
+\textbf{Definición:} Diremos que un v\'ertice v es visitado desde u, si se llama a $dft (v,u)$, esto es con u como padre de v.\\
+
+\textit{\textbf {Teorema (DFT):} El algoritmo de recorrido en profundidad de un \'arbol representado por lista de adyacentes visita cada v\'ertice una sola vez durante
+su ejecuci\'on.}\\
+
+\begin{verbatim}
+  dft(v,pv)
+1     parent[v] = pv
+2     por cada vértice u en ady[v]
+3         si u != pv, entonces
+4              dft(u,v)
+
+v: vértice pv: vértice padre de v          
+\end{verbatim}
+
+
+
+\textit{Demostración:} Cada v\'ertice ser\'a visitado una sola vez por el hecho de que cada v\'ertice solo tiene aristas con su padre y en caso de no ser
+una hoja, con sus hijos.\\
+
+Esto es, entonces, supongamos que un momento de la ejecuci\'on sobre un v\'ertice llam\'emosle u, durante el recorrido de su lista de adyacencia (l\'inea 2),
+$\exists$ un v\'ertice v que ya fue visitado y que vuelve a ser visitado desde u.\\
+
+Por la condici\'on 3, este v\'ertice no puede ser el padre de u. Luego u visita un v\'ertice distinto de su padre que ya fue visitado;  como cada
+v\'ertice de un \'arbol tiene solo aristas que lo unen a su padre y aristas con sus hijos, esto implica que v es un hijo de u, pero si v es hijo u,
+y tambi\'en ya fue visitado, hay dos situaciones: v era ancestro de u, lo que directamente es una contradicci\'on, o en otro caso hay otro camino
+en el \'arbol mediante el cual se visit\'o v y no forma parte del camino hasta u (porque no es ancestro); entonces tendr\'ia que existir un ciclo
+en el \'arbol, lo cual es tambi\'en una contradicci\'on.\\
+
+An\'alisis temporal del m\'etodo $dft(u,v)$\\
+
+Cada v\'ertice del grafo es visitado una vez durante la ejecuci\'on del m\'etodo, lo cual es $O (|V|)$.  Por cada v\'ertice se recorren todos sus
+adyacentes en la lista de adyacencia, por lo cual luego de finalizada la ejecuci\'on se habr\'a recorrido  la lista de adyacencia completa, o sea,
+se analizar\'a cada visita 2 veces (por u y por v), pero como se est\'a recorriendo un \'arbol $|E| = |V| - 1$, por lo cual $2|E| = 2|V| - 2$, que
+es $O(|V|)$, por lo tanto el recorrido de toda la lista de adyacencia es $O(V)$ para el \'arbol.  Luego por cada v\'ertice se hace $logn$ iteraciones 
+(donde $n = |V|)$ para precomputar las matrices dp y dw. Cada asignaci\'on dentro del ciclo for es $O(1)$, luego el ciclo se ejecuta en
+$O(log |V|)$. Como este proceso se repite por cada v\'ertice, entonces quedar\'a la ejecuci\'on  del m\'etodo acotada por 
+$O (|V|log|V|)$.\\
+
+
+
+%fin dft
+
+
+
+% empieza Kruskal
+
+\subsection{\textbf{Kruskal}}
+
+\begin{verbatim}
+
+Krukal(G:conexo,acíclico,no dirigido,ponderado)
+1    T  = {}, S = E[G]
+2    desde i = 1 hasta |V|-1
+3        extraer la menor arista e en S tal que
+         T+{e} es acíclico
+4        T = T+{e}
+5    devolver T
+\end{verbatim}
+
+\textit{\textbf{Teorema:} El algoritmo de Kruskal devuelve un \'arbol abarcador de costo m\'inimo(mst).}\\
+\\
+\textit{Demostraci\'on:}\\
+
+Demostremos que T, el grafo generado por el algoritmo es un \'arbol abarcador.  T no puede tener ciclos, ya que solo se a\~naden a T aristas bajo
+la condici\'on de que no produzcan ciclos, luego T es ac\'iclico.
+Luego, si cada arista e es a\~nadida a T bajo la condici\'on de no producir un ciclo en T, 
+sea $e = (u, v)$, e debe conectar dos componentes conexos de T de forma que antes de a\~nadir a e, $u \in C_{c_u} y v \in C_{c_v}$
+con $C_{c_u} \neq C_{c_v}$ y luego de  a\~nadido e a T, $u \in C_{c_u,v} y v \in C_{c_u,v} con C_{c_u,v} = C_{c_u} \cup C_{c_v}$. \\
+
+Para demostrarlo,  supongamos lo contrario, esto es que $e = (u,v)$ es a\~nadido a T con u,v que pertenecen a la misma componente conexa.  Luego
+si u,v pertenecen a la misma componente conexa antes de agregar e, entonces exist\'ia un camino de u,v en T, luego al a\~nadir la arista
+$e = (u, v)$ se formar\'ia un ciclo, lo cual contradice que sea ac\'iclico as\'i como contradice la inclusi\'on de e en T.  Luego en cada inclusi\'on 
+se unen dos componentes conexos de T, luego se an\~nade a lo sumo $n - 1$ v\'ertice para unir n componentes conexas, por lo cual T es 
+ac\'iclico, conexo y tiene $n-1$ aristas, lo que significa que T es un \'arbol y es un \'arbol
+abarcador de G pues contiene a todos sus v\'ertices.\\
+
+
+
+Demostremos que T es m\'inimo:\\
+
+Sea $E (T) = \{e_1, e_2, e_3,......, e_{n-1}\}$ la lista de las aristas de T en el orden en que fueron agregadas a T, esto implica \\
+$w (T) = \sum\limits_{i=1}^{n-1}w(e_i)$ y,\\
+$w (e_i)  \leq w( e_j)$, $\forall i,j : i \leq j$.\\
+
+Supongamos que $T$ no es un m\'inimo mst, luego sea $M$ el mst de $G$ con el m\'inimo n\'umero de aristas que no est\'an en T.\\
+
+Como $T$ no es un mst de $G$ , $T$ y $M$ no pueden ser id\'enticos. \\
+
+Sea ahora $e_i$ la primera arista en $E (T)$ que no est\'a en $M$. Si insertamos $e_i$ en $M$, tendremos $M'= M + {e_i}$ un grafo que contiene un ciclo.\\
+Luego como T es ac\'iclico, existe una arista e en el ciclo de $M'$ que no est\'a en $T$.  Luego se tiene que el grafo $M" = M' - {e}$ es un \'arbol abarcador
+ de $G$ (Lema 3) y:\\
+
+$ w(M") = w(M) - w(e) + w(e_i)$, como $w(M) \leq w(M")$, (porque $M$ es un mst)\\
+Entonces $w(e) \leq w(e_i)$.\\
+
+Pero durante la ejecuci\'on del algoritmo al a\~nadir la arista $e_i$ se garantiza que es una arista de peso m\'nimo que al ser a\~nadida mantiene
+ac\'iclico el grafo conformado por ${e_1, e_2, ...., e_i}$. Al mismo tiempo, todas estas aristas, excepto $e_i$ forman parte de $M$, por lo que ${e_1, e_2,..., e_{i - 1}}$
+es tambi\'en ac\'iclico, con lo cual si durante la ejecuci\'on si se escogi\o $e_i$ antes de e para formar parte del grafo ${e_1, e_2,..., e_{i - 1}}$ entonces
+se tiene que $w(e_i) \leq w(e)$.\\
+
+Como se hab\'ia llegado anteriormente a que $w(e) \leq w(e_i)$, entonces se tiene que $w(e) = w(e_i)$.\\
+
+Con este resultado se tiene entonces que $M"$ es tambi\'en un mst de $G$, porque\\
+\\
+$w(M") = w(M) - w(e) + w(e_i)$\\
+$w(M") = w(M)$\\
+\\
+Y a su vez se tiene que $M"$ tiene al menos un v\'ertice  m\'as en com\'un con $T$ que $M$, lo cual es una contradicci\'on con el hecho de que $M$ es
+el mst con menos cantidad de v\'ertices que no est\'an en T.\\
+
+Luego se tiene que T es un mst de G.\\
+
+
+
+\textit{An\'alisis de la complejidad temporal del algoritmo de Kruskal:}\\
+
+La complejidad temporal del algoritmo depender\'a de la forma en que se busquen las aristas as\'i como de la forma de determinar si forman
+un ciclo luego de su agregaci\'on.\\
+
+Primero nos detendremos en el hecho de que cada arista que se agrega a T es la m\'inima para la cual se cumple que T sigue siendo ac\'iclico
+luego de su agregaci\'on, y por tanto el conjunto $E (T)$ de las aristas en su orden de agregaci\'on a T es ${e_1, e_2, ...,  e_{n-1}}$ y cumple que:
+$w(e_i) \leq w(e_i+1)$. Luego lo primero que se puede hacer en el algoritmo es ordenar las aristas por su peso y recorrerlas de forma lineal 
+comprobando si pueden ser agregadas a T.  Esto se garantiza porque para cualquier par de aristas $e_i, e_j$ que cumplan la condici\'on en la iteraci\'on
+k del algoritmo, si $w (e_i) < w(e_j)$, $e_i$ ser\'ia agregado y  $e_j$ no podr\'ia formar parte ya que formar\'ia un ciclo en T.\\
+
+Luego recorrer las aristas mientras  T no sea el \'arbol abarcador ser\'a $O(|E|)$.  Para representar el \'arbol T y las operaciones para agregar las
+aristas, con el empleo del disjoint set\footnote{Demostraci\'on de la complejidad temporal del Disjoint Set en  Introduction algorithm, Third Edition Sector 214, pag. 573}, con los m\'etodos SetOf y Merge implementado por union by rank and path compression, se puede saber
+si u y v pertenecen o no a la misma componente conexa a trav\'es del SetOf en $O(log|V|)$ y para agregar la arista a T en 
+$O(1)$ con Merge(implementado sin SetOf, comprobaci\'on fuera del m\'etodo), luego la ejecuci\'on
+del algoritmo de Kruskal que realic\'e para la soluci\'on del problema ser\'ia:
+
+Por cada inicializaci\'on $O(|V|)$, luego ordenar\footnote{utilizando el sort de python, a\~nadido a la bibliograf\'ia} las aristas del grafo $O(|E|log|E|)$, luego en el recorrido de las aristas el peor caso se realiza
+$|E|$ iteraciones y en cada una se se hacen dos llamados a SetOf que es $O(log|V|)$; el resto de operaciones dentro del ciclo se realiza en
+$O(1)$, por lo cual crear el \'arbol T durante el ciclo ser\'a $O(|E||log|V|)$.
+
+Como $|E| < |V|^2$
+$log|E| < log|V|^2$ 
+$log|E| < 2log |V|$
+
+por lo que $log|E|$ es $O(log|V|)$ y por tanto el tiempo de ejecuci\'on de Kruskal ser\'a $O(|E|log|V|$ . 
+
+
+
+% fin Kruskal
+
+
+
+\end{document}
+

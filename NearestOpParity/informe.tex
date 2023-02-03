@@ -1,0 +1,322 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{manfnt}
+\usepackage{amsfonts,amsmath, amsthm}
+\usepackage[margin=2cm]{geometry}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+
+\begin{document}
+
+  \title{Informe\\
+  Matem\'atica Discreta II\\
+     Nearest Opposity Parity\\
+     Problema:1272E}
+  \author{Abel Molina S\'anchez\\
+  Grupo 2-11\\
+  Ciencias de la Computaci\'on\\
+  Universidad de La Habana}
+    \maketitle  
+
+\newpage
+
+\section{Problema}
+
+
+\begin{center}
+\textbf{E. Nearest Opposity Parity}\\
+\end{center}
+
+	You are given an array a consisting of n intergers. In one move, you can jump from the position $i-a_i$ (if $1\leq i-a_i$) or to the position $i+a_i $(if $i+a_i\leq n$).\\
+	For each position i from 1 to n you want to know the minimum the number of moves required to reach any position j such that $a_j$ has the opposite parity 
+from $a_i$  (i.e. if $a_i$ is odd then $a_j$ as to the be even and vice versa).\\
+\\
+\textit{Input:}\\
+The first line of the input contains one integer n ($1\leq 2*10^5$) -  the number of element in a.\\
+The second line of the input contains n integers $a1,a2,..., an$ ($1\leq a_i\leq n$), where $a_i$ is the 1-th element of a.\\
+\\
+\textit{Output:}\\
+Print n integers $d1, d2,...dn$, where $d_i$ is the minimum the number of moves requiered to reach any position j such that $a_j$ 
+has the opposite parity from $a_i$ or -1 if it is impossible to reach such a position.\\
+\\
+
+\textbf{Interpretaci\'on y consideraciones del problema} \\
+
+Considero el arreglo de entrada como un grafo dirigido no ponderado $G(V,E)$, $(u,v)\in E$ par ordenado, donde cada  
+v\'ertice $v \in V[G]$ se caracteriza por cumplir o no la propiedad de ser par, digamos definida por la funci\'on $Par(x):N\rightarrow \{0,1\}$ que indica si es par o no de acuerdo a su congruencia m\'odulo(2); pero en s\'i,  
+son dos grupos bien definidos por esta propiedad ya que $ \forall n\in N$, 2 divide a n o 2 no divide a n. Luego cada v\'ertice tendr\'ia como adyacentes, o una arista incidente en ellos, a aquellos que se encuentran en las  posiciones $i + ai$ e $i-ai$ siempre que sea posible.\\
+
+Luego se tendr\'ia un grafo  $G(V,E)$ dirigido, donde se busca encontrar para cada v\'ertice la m\'inima distancia hacia otro cualquiera que  sea evaluado de forma distinta que \'el por la propiedad $Par(x)$.\\
+
+\textbf{Ideas de soluci\'on}\\
+
+Primera idea: conociendo que el algoritmo $BFS(v)$ sobre un grafo G, para un v\'ertice $v \in V[G]$ calcula la m\'inima distancia desde 
+\'el hasta el resto de los v\'ertices del grafo, la primera idea de soluci\'on pasa por ejecutar el algoritmo de $BFS(v)$ para 
+cada v\'ertice v que forma parte del grafo del problema. Se realizar\'ia 
+comprobando si se encuentra a alguno que sea evaluado contrario a \'el por la funci\'on $Par(x)$ que define la propiedad de ser o no par. Luego, esta soluci\'on tendr\'ia una complejidad temporal $O(|V|^2+|V||E|)$ que es mejorable dados los 
+planteamientos del problema.\\
+\\
+
+Idea de la soluci\'on presentada:\\
+
+Considerando los dos grupos definidos de v\'ertices por la funci\'on $Par(x)$, llamaremos rojos(r) y azules(a) a estos dos grupos. La soluci\'on pasar\'a por encontrar la menor  distancia hasta cada v\'ertice azul partiendo la b\'usqueda desde los v\'ertices rojos y viceversa. Luego para adaptar la soluci\'on a las condiciones iniciales del problema, 
+considero el grafo $G^-=(V,E^-)$, donde por cada par ordenado $(u,v)\in E[G]$, $(v,u)\in E^-[G^-]$
+(cambiar la orientaci\'on del arco). Entonces cada v\'ertice i va a ser incidido por los v\'ertice $i-a_i$ e $i+a_i$ (siempre que sea posible). \\
+
+Luego, la idea pasa por agregar un nuevo v\'ertice a $G^-$, llam\'emosle blanco(b), conectado a cada v\'ertice rojo de $G^-$, o sea, existir\'an las aristas $(b, r_i) \forall r_i\in V[G^-]$(siendo $r_i$ los v\'ertices rojos de $G^-$).
+ Luego se ejecutar\'ia el algoritmo $BFS()$ partiendo desde b y por cada v\'ertice azul guardar la menor distancia hallada desde b hasta ellos. Luego repetir el proceso
+cambiando azules por rojos y restando 1 a cada distancia obtenida se tendr\'a la soluci\'on completa del problema.\\
+\\
+
+ \textbf{Definiciones y Demostraci\'on:} \\
+
+\textbf{Definici\'on:} Un grafo dirigido es un par $G=(V,E)$ donde $V$ es un conjunto de v\'ertices y $E$ es un conjunto de pares ordenados $(u,v)$.\\
+\\
+\textbf{Definici\'on:} En un grafo $G=(V,E)$ dirigido, a los pares ordenados $(u,v) \in E[G]$ se les llama arco.\\
+\\
+\textbf{Definici\'on:}  En un grafo $G=(V,E)$ dirigido, un v\'ertice $v \in V[G]$ es adyacente a otro v\'ertice $u \in V [G]$ si el arco $(u, v) \in E[G]$.\\
+\\
+\textbf{Definici\'on:}  En un grafo $G=(V,E)$ dirigido, se dice que un arco incide sobre $v\in V[G]$ cuando $v$ es el segundo v\'ertice del par ordenado que define ul arco (ej: (u,v)). \\
+\\
+\textbf{Definici\'on:}  En un grafo $G=(V,E)$ dirigido, se dice que $v$ es adyacente a $u$, si el arco $(u,v)\in E$\\
+\\
+\textbf{Definici\'on:} Una lista de adyacencia es una estructura que se utiliza para representar un grafo.
+ La lista de adyacencia para un grafo $G=(V,E)$ dirigido, ser\'a una lista donde cada v\'ertice contiene el conjunto de los v\'ertices que son adyacentes a \'el.\\ 
+\\
+\textbf{Definici\'on:} Se llama camino dirigido en un grafo $G=(V,E)$ dirigido a la secuencia de arcos $A_1A_2A_3..A_n$, tal que el primer v\'ertice de $A_{i+i}$
+coincide con el segundo v\'ertice de $A_i$ $\forall i$, $i = 2, 3 ... ,n-1$. Tambi\'en se puede representar el camino dirigido con la secuencia de v\'ertices ordenadas seg\'un los arcos. En este problema simplemente le llamaremos camino al camino dirigido.\\
+\\
+\textbf{Notaci\'on:} En este problema se denotar\'a como $cd(u,v)$ al camino dirigido de $u$ a $v$, con $(u,v)\in V[G]$.\\
+\\
+\textbf{Definici\'on:} Sea $G=(V,E)$ un grafo dirigido, se define como grafo inverso de $G$, al grafo dirigido  $G^-=(V,E^-)$ tal que $(u,v)\in E[G]$, $(v,u)\in E^-[G^-]$.\\
+\\
+\textbf{Propiedad:} $G=(G^-)^-$\\
+Demostraci\'on: Directo de la definci\'on grafo inverso.\\
+\\
+
+\textbf{Lema 1:} Para cada $cd (v,u)$ en $G^-$ existe el $cd(u,v)$ en $G$ y viceversa. \\
+Demostraci\'on:\\
+Inducci\'on en la cantidad de v\'ertices del camino.\\
+
+Caso base: para 2, un camino de 2 v\'ertice es un arco, por definici\'on, si $(u,v)\in E$, $(v, u)\in E^-$.\\
+
+Asumimos por hip\'otesis que se cumple para caminos con k-1 v\'ertices.\\
+
+Sea $v_1... v_{k-1},v_k$ un $cd (v_1, v_k)$, si quitamos el v\'ertice $v_k$ del grafo, con todos los arcos incidentes en \'el, nos queda el camino $v_1, v_2... v_{k-1}$ que por hip\'otesis de inducci\'on cumple que existe $v_{k-1},...,v_1$ en $G$.
+ Luego, agrego el v\'ertice $v_k$ con sus arcos incidentes y se tiene el arco $(v_{k-1}, v_k)$ que  por caso base se cumple 
+ que $(v_k,v_{k-1})\in E$, luego existir\'a el camino $v_k,v_{k-1},...,v_1$ en $G$, luego se cumple para caminos de k v\'ertices.\\
+Luego por la Propiedad 1 y la inducci\'on mat\'ematica se demuestra que el Lema 1 se cumple.\\
+\\
+
+\textbf{Definici\'on:} En un grafo $G=(V,E)$ dirigido, se llama distancia de un camino $p$, de u a v, a la cantidad de arcos presentes en $p$.\\
+\\
+\textbf{Definici\'on:} En un grafo $G=(V,E)$, se llama $\delta(u,v)$a la distancia m\'inima de $u$ a $v$ en el G. Esto, es, 
+$\delta(u,v)$ se\'a igual a la distancia de los caminos de distancia m\'inima de $u \rightarrow v$.\\
+\\
+\textbf{Definici\'on:} Si en un grafo $G=(V,E)$, no existe un camino $p$ de $u\rightarrow v$, se denota como  
+$\delta(u,v)=\infty$.\\
+\\
+\textbf{Notaci\'on:} Sea $p$ un camino en un grafo $G=(V,E)$, decimos que $d(p)$ es la distancia de p.\\
+\\
+
+
+Ahora para continuar con la demostraci\'on de la soluci\'on analicemos la correctitud del algoritmo $BFS$:\\
+\\
+
+\begin{verbatim}
+    BFS(s)
+1       por cada vértice v en V[G]:
+2            d[v] = INF
+3       d[s] = 0, Q = {}
+4       Q.Enqueue(s)
+5       mientras !Q.Empty:
+6            u = Q.Dequeue
+7            por cada vértice v in Ady[u]:
+8                 si no se tiene d[v] < INF:
+9                       d[v] = d[u]+1
+10                      Q.Enqueue(v)
+
+Ady: Lista de adyacencia para el grafo G=(V,E)
+\end{verbatim}
+
+\textbf{Notaci\'on:} Sea s el v\'ertice con el que se inicializa el algoritmo $BFS$, ser\'a $d[u]$ la distancia de s a v computada por el $BFS$.\\
+\\
+\textbf{Definici\'on:} Se dice que v es descubierto cuando v es agregado a la cola.\\
+\\
+\textbf{Definici\'on:} Se dice que u es explorado cuando es extra\'ido de la cola y se analizan los v\'ertices adyacentes a \'el.\\
+\textbf{Definici\'on:} Se dice que u descubre a v, o v es descubierto por u, cuando v es descubierto durante el an\'alisis de la lista 
+de adyacencia de u.\\
+\\
+
+\textbf{Lema 1(BFS):} $\forall$ v\'ertice v descubierto durante la ejecuci\'on del algoritmo $BFS(s)$, 
+$d[v] < \infty$\\
+
+Demostraci\'on:\\
+Inducci\'on en la cantidad de  iteraciones\\
+Caso base para la iteraci\'on inicial,  $d[s]= 0 < \infty$
+Asumamos por hip\'otesis que se cumple para todo v\'ertice descubierto en las iteraci\'ones anteriores a $k+1$.\\
+Sea $j$ un v\'ertice descubierto durante la iteraci\'on $k + 1$, sea $i$ el v\'ertice que descubre a $j$, $i$ tiene que haber sido explorado 
+durante la iteraci\'on $k + 1$, luego $i$ fue descubierto en una iteraci\'on anterior a la $k+1$, y por tanto 
+$d[i] = c <\infty $, luego, como $ i$ descubre a $j$, 
+$d[j] = d[i] + 1 < \infty$.\\
+\\
+\textbf{Lema 2(BFS):} Todo v\'ertice v alcanzable por s es descubierto una sola vez.\\
+
+Demostraci\'on: Supongo que hay al menos un v\'ertice que es descubierto m\'as de una vez durante la ejecuci\'on del algoritmo. Sea x el \'unico
+o al menos el primero en esa condici\'on. Sea la segunda vez que se descubre x, si se descubre es porque cumple la  condici\'on 
+de la l\'inea 8, lo cual es una contradicci\'on con el Lema1(BFS). Por tanto se cumple que cada v\'ertice alcanzable desde  s se descubre una sola vez en 
+el algoritmo.\\
+\\
+ 
+\textbf{Lema 3(BFS)\footnote{Lema 22.3 Introduction to Algorithms 3rd Edition,p.599}:}\\
+Suponer que durante la ejecuci\'on del BFS, la cola contiene los v\'ertices $<v_1, v_2, ..., v_r>$ donde $v_i$ es el primero y $v_r$ el \'ultimo. 
+Se cumple que $d[v_r] \leq d[v_1] + 1$ y  que $d[v_i] \leq d[v_{i+1}]$ para $i = 1,2, ...,r-1$.\\
+
+Demostraci\'on:\\
+ Inducci\'on sobre las de operaciones en la cola.\\ 
+Caso base para cuando solo s est\'a en la cola se cumple $d[s] \leq d[s]+1$, $v_i$ coincide con $v_r$.\\
+Hip\'otesis: si la cola contiene los v\'ertices $v_1, v_2, v_3... v_r$, $v_1$ el primero, $v_r$ el \'ultimo,
+ $d[v_r] \leq d[v_1] + 1$ y  $d[v_i] \leq d[v_{i + 1}]$ para $i= 1,2,...,r-1$.\\
+
+Demostrar que se cumple cuando se realiza la operaci\'on de extraer y agregar a la cola v\'ertices.\\
+
+Si se extrae el primer v\'ertice de la cola, $v_1$, luego queda $v_2$ como primero dentro de la cola, por hip\'otesis se cumple que $d[v_1] \leq d[v_2]$\\
+luego\\ 
+$d[v_1] + 1 \leq d[v_2] + 1$,\\ 
+y por hip\'otesis se tiene que\\
+ $d[v_r] \leq d [v_1]+1$.\\
+ Uniendo ambas, se llega a que\\
+  $d[v_r] \leq d[v_1] + 1 \leq d[v_2] +1$,\\
+$d[v_r] \leq d[v_r] + 1$,\\
+ luego se cumple tras realizar una extracci\'on del primero de la cola.\\
+
+Luego, cuando se agrega un v\'ertice $v$ a la cola, \'este se convierte en el \'ultimo, $v_r+1$. Este v\'ertice tiene que haber sido descubierto por un v\'ertice
+u  que est\'a siendo explorado, por lo cual, u fue extra\'ido de la cola.  Por tanto, sea $v_1$ el primero de la cola luego de la extracci\'on
+de u, por hip\'otesis $d[v_1] \geq d [u]$. Como v fue descubierto por u, $d[v_r] = d [u]+1$.\\
+
+Entonces se tiene que:\\
+ $d[v_{r + 1}] = d[v] = d[u] + 1 \leq d[v_1] + 1$\\
+  Como u era el primero en la cola antes de su extracci\'on, se tiene que 
+$d[v_r] \leq d[u] + 1$ por hip\'otesis.\\
+  Luego \\ 
+  $d[v_r] \leq d[u] + 1 = d[v] = d[v_{r+1}]$, por tanto,\\
+   $d[v_r]  \leq d[v_{r+1}]$.\\
+Por lo tanto el Lema se cumple luego de extraer o agregar v\'ertices en la cola.\\
+\\
+
+\textbf{ Lema 4:} Si v es descubierto despu\'es de u, se cumple que $d[u] \leq d[v]$.\\
+\\
+Demotraci\'on: por el Lema2($BFS$) se garantiza que cada v\'ertice es descubierto una \'unica vez, luego consideramos todos los v\'ertices descubiertos entre u y v durante la ejecuci\'on.
+sean $u, v_1, v_2,...v_k, v$ por el Lema3($BFS$) se tiene que $d[u] \leq d[v_1] \leq d[v_2],...,d[v_k]\leq d[v]$.\\
+\\
+ 
+\textbf{Lema 5:} Despu\'es de la ejecuci\'on del $BFS(s$), $\forall  v \in V[G]$, $d[v] \geq \delta(s,v)$.\\
+
+Demotraci\'on: Despu\'es de la ejecuci\'on del BFS $d[v]$ representa la distancia de un camino de $u$ a $v$, luego por definici\'on 
+$\delta, \delta(s,v)$ es la distancia del menor camino de $s$ a $v$.  Por lo tanto $d[v] \geq \delta (s, v)$.\\
+
+
+\textbf{Lema 6}: Sea $p$ un camino de distancia m\'inima de $s \rightarrow v$ y la arista $u,v$ forma parte del camino, entonces $p - (u,v)$ es un camino de distancia m\'inima de $s \rightarrow u$.\\
+\\
+Demostraci\'on: 
+Supongo que no se cumple, luego $ \exists q$ un camino de $s \rightarrow u$ tal que:
+ $d(q) < d(p-(u,v))$,\\
+  como $p$ es un camino m\'inimo de $s \rightarrow v$, $d(p) =\delta(s,u)$,
+luego $d(p - (u,v))$ $=$ $\delta(s,v) - 1$ (por la arista u,v)\\
+Se tiene que:\\
+
+$d(q) < \delta(s,v) - 1$, luego\\
+$d (q) + 1 < \delta (s, v)$ (1)\\
+Ahora, agrego $(u,v)$ a q y hay dos casos.\\ 
+Si $(u,v) \in q$, existe un camino menor que p de $s-v$, que contradice que p sea m\'inimo. \\
+$(u, v) \notin q$ si lo agrego, sigue siendo, por (1), un camino de $s \rightarrow v$ menor que p, lo que contradice que p sea  m\'inimo. Luego $p - (u,v)$ es un camino m\'inimo de $s\rightarrow u$.\\
+\\
+\textbf{Corolario1:} Sea $p$ un camino m\'inimo de $s \rightarrow v$ y la arista $(u, v)$, forma parte de $p$, entonces $\delta (s,v) = \delta (s, u)+ 1$. \\
+Demostraci\'on: 
+Por el Lema 6, si p es un camino m\'inimo de $s \rightarrow v$, entonces $p - (v, u)$ es un camino m\'inimo de $s \rightarrow u$. Como la distancia del camino
+ m\'inimo es igual $\delta (s,u)$,luego\\
+
+$\delta (s,u) = d (p - (u, v))$\\
+$\delta (s, u) = \delta (s, v) - 1$\\
+$\delta (s, v) = \delta (s, u) + 1$\\
+\\
+
+\textbf{Teorema 1}: luego de ejecutado el algoritmo $BFS(s)$,  $d[v] = \delta (s,v)$ $\forall v \in G$.\\
+
+Demotraci\'on:
+ Supongo que existe al menos un v\'ertice v tal que $d[v] \neq \delta (s,v)$.\\
+ Si no existe camino entre $s$ y $v$ en $G$, entonces $v$ no es descubierto durante la ejecuci\'on y por la inicializaci\'on se tiene $d[v] = \delta(s,v)$.\\
+ Luego analicemos cuando existe un camino entre $s$ y $v$ en $G$.\\  
+
+Sea v el v\'ertice m\'as cercano tal que se cumple esa condici\'on. Luego, por Lema 5 se tiene que $d[v] >  \delta (s,v)$\\
+
+Sea $p$ un camino m\'inimo de $s\rightarrow v$. Sea $(u, v)$ el \'ultimo arco  de $p$, $p=(s,s_1, s_2... uv)$.  Como $p$ es un camino m\'inimo de $s \rightarrow v$, 
+ $d(p) = \delta (s, v)$ y por el Corolario 1, $\delta(s,v) =\delta(s,u)+1 $  \\
+
+Luego como v es el m\'as cercano que cumple la condici\'on $d[v] > \delta (s,v)$, se tiene que $d[u] = \delta (s,u)$.
+Entonces se tiene:\\
+ $d[v] > \delta (s,v) = \delta(s,u) + 1 =  d[u] + 1$\\
+ $d[v] > d [u] + 1$   $(2)$ \\ 
+
+Ahora analizando el estado de v en el momento en que u es explorado:
+
+Caso 1: $v$ no ha sido descubierto:\\
+
+Como $v$ no ha sido descubierto y $v$ es adyacente a $u$, $v$ ser\'a descubierto por $u$, por lo tanto $d[v]=d[u]+1$ lo cual es una contradicci\'on con $(2).$\\
+
+Caso 2: $v$ fue explorado.\\
+
+Si $v$ fue explorado, como $u$ est\'a siendo explorado, $v$ tuvo que ser explorado antes que $u$, por lo cual fue descubierto antes que $u$
+ y por el Lema 4, $d[v] \leq d[u]$, lo cual es una contradicci\'on con $(2)$.\\
+
+Caso 3: $v$ fue descubierto pero no explorado ($v$ est\'a en la cola).\\
+
+Sea $w$ el v\'ertice que descubre a $v$, luego $v$ tuvo que ser descubierto antes que $u$ fuera explorado, porque $u$ est\'a siendo explorado, si $v$ no hubiera sido
+descubierto, $u$ descubrir\'ia a $v$, por tanto $w$ fue explorado antes que $u$ sea explorado, por tanto $w$ fue descubierto antes que $u$ fuera descubierto 
+y por Lema 4: \\
+$ d[w] \leq d[u]$, sumando 1 a cada miembro \\
+ $d[w] + 1 \leq d[u] + 1$. \\
+ Como $w$ descubri\'o  a $v$,\\
+ $d[v] = d[w] + 1$, por tanto\\
+ 
+$d[v] \leq d[u] + 1$, lo cual es una contradicci\'on con $(2)$.\\
+
+Luego queda demostrado que luego de la ejecuci\'on de BFS(s) $d[v] = \delta (s, v) \forall v \in V[G]$.\\
+\\
+
+\textbf{Teorema:} La soluci\'on descrita resuelve correctamente el problema planteado. Sea $n_i$ la soluci\'on esperada, luego de terminada la ejecuci\'on $n_i = \kappa_i$ $\forall i , i = 1,...,n$, siendo $\kappa_i$ la soluci\'on del algoritmo para i.\\
+
+Demostraci\'on:
+
+Supongamos que $\exists i$, tal que $n_i\neq \kappa_i$, llam\'emosle u.\\
+Sin p\'erdida de generalidad digamos que u es par, y que los pares son azules en la soluci\'on.\\
+Si no existe un camino desde $u$ hasta un nodo impar, por definici\'on de grafo inverso, Lema 1 y Propiedad 1, no habr\'a un camino desde un impar hasta u, y por lo tanto no har\'a ning\'un v\'ertice rojo a trav\'es del cual se alcance el v\'ertice azul que representa u, luego, b solo posee aristas con los v\'ertices rojos, luego no habr\'a camino desde b a un v\'ertice rojo, por lo que por inicializaci\'on y la correctitud del algoritmo de $BFS$ no se hallar\'a un camino.\\
+Analicemos el caso en el que existe un camino entre u y un impar.\\
+Sea $v_x$ el impar tal que el camino de u a \'el es m\'inimo, tenemos que su distancia ser\'a $\delta(u,v_x)$.\\
+Sea $r_x$ el v\'ertice rojo tal que el camino min\'inimo $p$ hallado en la ejecuci\'on del algoritmo es $p= b,r_x,...,u$,
+luego $d(p) = \delta(b,u)$, como se termina restando 1 a la distancia obtenida \\
+$\kappa_i = \delta_i - 1$,\\
+ pero por Corolario1 tenemos que \\
+ $\delta(b,u)-1 = \delta(r_x,u) = \kappa_{i=u}$.\\
+ Una vez visto  esto, hemos asumido que
+ $\delta(u,v_x)\neq \delta(r_x,u)$:\\
+ \\
+ Caso 1:  $\delta(u,v_x)>\delta(r_x,u)$\\
+  Dado esto, por Lema 1 y Propiedad 1, se puede afirmar que existe un camino de $u\rightarrow r_x$,$r_x$ impar en el grafo original tal que $\delta(u,r_x)<\delta(u,v_x)$, lo cual es una contradicci\'on con el hecho de que $v_x$ sea el impar m\'as cercano.\\
+  Veamos el otro caso: $\delta(u,v_x)<\delta(r_x,u)$\\
+  Si esto se cumple por el Lema 1 y la propiedad 1 se tiene que va a existir un v\'ertice rojo $v_x$ en el grafo de la soluci\'on tal que $\delta(v_x,u)<\delta(r_x,u)$, pero esto es, como b tiene aristas que lo unen a cada nodo rojo y por el corolario1:\\
+  $\delta(b,u)<\delta(b,u)$, lo cual es una contradicci\'on y tambi\'en contradice el Teorema de correctitud del algoritmo 
+  $BFS$.\\
+  \\
+  
+  Una vez demostrada la correctitud de la soluci\'on, se pueden plantear los detalles de la implementaci\'on.\\
+  Se utiliza un \'unico m\'etdo $BFS$ para calcular los caminos m\'inimos de pares a impares y de impares a pares. Para esto, recibe 2 listas con los v\'ertices pares e impares, llamando azules a los que se le busca la distancia m\'inima. Como el v\'ertice b tiene aristas con cada v\'ertice rojo, al final habr\'ia que restar 1 a cada distancia y en la primera iteraci\'on todos los v\'ertices rojos ser\'ian agregados a la cola, por tanto, directamente inicializo la lista d de las distancias a los v\'ertices rojos en 0 y los agrego a todos a la cola. Luego tengo directamente el valor de la distancia de los v\'ertices azules, siendo b un v\'ertice 'ficticio' en la implementaci\'on.
+  
+  Complejidad temporal de la soluci\'on:\\
+La complejidad temporal va a estar dada por el tiempo de ejecuci\'on del $BFS()$.
+Cada operaci\'on de Enqueue y Dequeue sobre la cola\footnote{Utilizando deque de Python, parte de la bibliograf\'ia} se realiza en $O(1)$. A lo sumo se descubren $|V|$ v\'ertices por tanto se realiza
+ a lo sumo $O(|V|)$ operaciones sobre la cola. Luego por cada  v\'ertice se revisa a lo sumo una vez su lista de adyacencia,
+ por lo cual se recorre a lo sumo todos los arcos del grafo, pero por las condiciones iniciales hay a lo sumo $2|V|$ arcos, ya que cada i puede ir a $i-a_i$ o $i+a_i$ a lo sumo, por lo que recorrerlos todos ser\'a $O(|V|)$, la inicializaciones son $O(|V|)$ para crear el arreglo d. Luego la 
+complejidad temporal del algoritmo ser\'a la complejidad de recorrer toda la lista de adyacencia del grafo, por lo que ser\'a $O(|V|)$.
+
+\end{document}

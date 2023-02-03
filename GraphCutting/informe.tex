@@ -1,0 +1,105 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{manfnt}
+\usepackage{amsfonts,amsmath, amsthm}
+\usepackage[margin=2cm]{geometry}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+
+\begin{document}
+
+  \title{Informe\\
+  Matem\'atica Discreta II\\
+     Graph Cutting\\
+     Problema:405E}
+  \author{Abel Molina S\'anchez\\
+  Grupo 2-11\\
+  Ciencias de la Computaci\'on\\
+  Universidad de La Habana}
+    \maketitle  
+
+\newpage
+
+\section{Problema}
+\begin{center}
+ E. Graph Cutting
+\end{center}
+
+Little Chris is participating in a graph cutting contest. He's a pro.\\
+The time has come to test his skills to the fullest. Chris is given a simple undirected connected graph with $n$ vertices (numbered from $1 to n$) and $m$ edges.\\
+The problem is to cut it into edge-distinct paths of length 2.\\
+Formally, Chris has to partition all edges of the graph into pairs in such a way that the edges in a single pair are adjacent
+and each edge must be contained in exactly one pair.\\
+For example, the figure shows a way Chris can cut a graph. The first sample test contains the description of this graph.
+You are given a chance to compete with Chris. Find a way to cut the given graph or determine that it is impossible!\\
+\\
+Input\\
+\\
+The first line of input contains two space-separated integers $n$ and $m$ $(1?\leq?n,?m?\leq?10_5)$, the number of vertices and the number of edges in the graph.\\
+The next $m$ lines contain the description of the graph's edges. The $i$-th line contains two space-separated integers
+$a_i$ and $b_i$ $(1?\leq?a_i,?b_i?\leq?n$; $a_i?\leq?b_i)$,the numbers of the vertices connected by the i-th edge. \\
+It is guaranteed that the given graph is simple (without self-loops and multi-edges) and connected.\\
+\\
+Note: since the size of the input and output could be very large, don't use slow output techniques in your language. For example, do not use input and output streams (cin, cout) in C++.\\
+\\
+Output\\
+\\
+If it is possible to cut the given graph into edge-distinct paths of length 2, output lines. In the $i$-th line print three 
+space-separated integers $x_i, y_i$ and $z_i$, the description of the $i$-th path. The graph should contain this path, i.e., the graph should contain edges $(x_i,?y_i)$ and $(y_i,?z_i)$. Each edge should appear in exactly one path of length 2. If there are multiple solutions, output any of them.\\
+\\
+If it is impossible to cut the given graph, print "No solution" (without quotes).\\
+\\
+\\
+\\
+\textit{ \textbf{Lema 1:} Es un grafo $G= (V,E)$ conexo con $|E|> 2$,que cumple que no existen dos vértices $u,v \in V$ con v y u adyacentes tal que $dg(u) = 1 = dg(u) = 1$.}\\
+\\
+\textit{Demostración:} Supongamos que existen $x, y \in V$ con x, y adyacentes y $dg(x) = dg(y) = 1$\\
+\\
+Luego se tiene que G es un grafo conexo con $|E| >2$, digamos $|E|$ es  m\'inimo, esto sea, $|E| = 3$, luego
+$\exists 2 aristas$ m\'as en G, digamos $e_1, e_2$.  Si $e_i = (v_i v_j)$, siendo  $v_i, v_j \in V$, como G tiene que ser
+conexo, entonces $e_2$ tiene que conectar a $v_i o v_j$ con x o y. Sin p\'erdida de generalidad digamos que
+$e_2 = (v_i, v_j)$, con x o y. Sin p\'erdida de generalidad digamos que $e_2 = (x_1, v_2)$ pero esto es una contradicci'on
+con el hecho de que $dg(x) = 1$, con lo cual el lema queda demostrado.\\ 
+\\
+\textbf{Definición:} Llamamos arista puente a un grafo $G  = (V,E)$, a las aristas $e \in E$, que si se extraen de G aumentan en 1 la cantidad de componentes conexos de G.\\
+\\
+\textit{Demostración:} Directo por la definici\'on de arista puente, si e es una arista puente, entonces  aumentar\'a en 1 la
+cantidad de componentes conexos de G.Luego, si e no es arista puente, e no desconectar\'a el grafo, por lo cual se mantendr\'a la misma cantidad de componentes conexos en G.\\
+\\ 
+\textit{ \textbf{Lema 2:} Sea $G = (V,E)$ un grafo tal que k es igual a la cantidad de componentes conexos de G, luego de eliminar una arista de G el n\'umero de componentes conexos en G es a lo sumo $(k+1)$.}\\
+\\
+\textit{ \textbf{Lema 3:} Luego de extraer la arista $e = (u,v)$ del grafo $G = (V,E)$ se tiene que u y v pertenecen a distintos componentes conexos $\Leftrightarrow e$ es una arista puente.}\\
+\\
+\textit{Demostración:} $\Rightarrow$ si luego de extraer la arista e, u y v quedan en distintos componentes conexos, entonces es porque no existe un camino desde ning\'un v\'ertice $w_u \in V_u$ hasta un v\'ertice $w_u \i V_u$, siendo $V_u y V_v$ los componentes conexos de u y v respectivamente, lo cual significa que antes de extraer e del grafo exist\'ia un camino $V_v \Rightarrow uev \Rightarrow V_v$ lo cual implica que e es una arista puente.\\
+\\
+Si e es una arista puente, supongamos que luego de que se extrae e del grafo u y v quedan en la misma componente conexa, pero esto significa que existe un camino en el grafo mediante el cual se puede ir desde cualquier v\'ertice conexo con u a cualquier v\'ertice conexo con v sin utilizar la arista e, por lo cual el grafo no se desconectar\'ia, lo cual es una contradicci\'on con el hecho de que e es una arista puente.\\
+\\
+\textit{ \textbf{Teorema:} Sea G un grafo conexo con $|E| = 2k, k< \in N_+$ esto es una cantidad par de aristas, se cumple que se puede particionar en k caminos de taman\~o k.}\\
+\\
+\textit{Demostración:} Realizamos inducci\'on sobre $|E|$, para $k = 1$ se tiene\\
+\\
+ 			$v_1 -- v_2--v_3$  (no pueden ser m\'as de 3 v\'ertices porque es camino.\\
+\\
+Luego se tiene que se cumple para $k = 1$.\\
+\\
+Ahora, sea el k inductivo para $k > 1$ esto es $|E| = 2k > 2$ y por hip\'otesis asumimos que se cumple para todo grafo con menor cantidad de aristas.\\
+\\
+Luego, dado que G es conexo, y $|E| > 2$, por Lema 1 se cumple que no existen v\'ertices adyacentes en G, cuyo $dg(x) = 1$. Luego elegimos el v\'ertice $u \in v$ por lo dicho anteriormente $dg (u) \geq 2$. Sean ahora $,v y w \in v$, con $v \neq w$, dos v/'ertices adyacentes a u en G.\\
+\\
+Sea ahora $G'= G - {(u, v), (u, w)}$ y sean $G_1,..., G_i$ las componentes conexas de G'.  Por el Lema 2, $i \leq 3$ y $\forall i$, por el Lema 3 se cumple que $G'$ contiene al menos una entre ${u, v, w}$.\\
+\\
+Luego si cada $H_j(1 \leq j \leq i)$, tiene un n\'umero par de aristas, entonces por hip\'otesis de inducci\i'on
+ $H_i$ puede ser particionado en $|E[H_i]|/2$ caminos de taman\~o 2 y como $G' = G - \{(u,v ), (u, w)\}$, entonces 
+ $|E[G']| = |E| - 2 = 2k-2 = 2(k-1)$,\\
+  luego $ \sum\limits_{j=1}^{i}|E[H_j]|/2 = k - 1$\\
+   y como $ {v,u,w} $ es un camino de tama\~no 2, agregando $(u,v)$ y $(u,w)$ al $G$,\\
+    se tiene una partici\'on de k caminos de tama\~no 2 para G. 
+    Luego analizado el caso en el que son pares, entonces supongamos que hay al menos 1 entre los 
+    ${H_j}$ tal que $|E [H_j]|=$ n\'umero impar, pero dado $|E [G]|$ es par y se demostr\'o que $m \leq 3$, entonces tiene que haber exactamente dos componentes de tama\~no impar, sean estas $H_1$ y $H_2$.  Luego agregando una entre (u,v) y (u, w) con sus respectivos v\'ertices a $H_1$ y $H_2$ respectivamente, se formar\'an  los subgrafos conexos $H'_1$ y $H'_2$, respectivamente.\\
+\\
+Luego por hip\'otesis de inducci\'on se cumplir\'a para $H'_1, H'_2$ y si $m = 3$ para $H_3$ cuya sumatoria de caminos ser\'a igual a k, siendo una partici\'on para G.  Con lo cual el teorema queda demostrado.\\
+
+
+
+\end{document}
+
